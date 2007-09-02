@@ -4,7 +4,7 @@
  INCLUDEPATH += ../../src/
  UI_DIR		   = ../../plugins/weby/
  FORMS		   = dlg.ui
- HEADERS       = plugin_interface.h weby.h gui.h
+ HEADERS       = plugin_interface.h weby.h gui.h globals.h
  SOURCES       = plugin_interface.cpp weby.cpp gui.cpp
  TARGET		   = weby
  
