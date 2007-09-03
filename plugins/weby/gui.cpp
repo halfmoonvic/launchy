@@ -56,10 +56,15 @@ void Gui::writeOptions()
 
 	settings->beginWriteArray("weby/sites");
 	for(int i = 0; i < table->rowCount(); ++i) {
+		if (table->item(i,0) == NULL || table->item(i,1) == NULL) continue;
+		if (table->item(i,0)->text() == "" || table->item(i,1)->text() == "") continue;
 		settings->setArrayIndex(i);
 		settings->setValue("name", table->item(i, 0)->text());
 		settings->setValue("base", table->item(i, 1)->text());
-		settings->setValue("query", table->item(i, 2)->text());
+		if (table->item(i,2) == NULL)
+			settings->setValue("query", "");
+		else
+			settings->setValue("query", table->item(i, 2)->text());
 	}
 	settings->endArray();
 }
