@@ -21,9 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CHARLISTWIDGET_H
 
 
-#include <QtGui/QListWidget>
-
-
 class CharListWidget : public QListWidget
 {
 	Q_OBJECT
@@ -32,10 +29,12 @@ public:
 	CharListWidget(QWidget* parent = 0);
 	void keyPressEvent(QKeyEvent* key);
 	void mouseDoubleClickEvent(QMouseEvent* event);
+	void focusInEvent(QFocusEvent* event);
 	void focusOutEvent(QFocusEvent* event);
 
 signals:
 	void keyPressed(QKeyEvent*);
+	void focusIn(QFocusEvent* event);
 	void focusOut(QFocusEvent* event);
 };
 
