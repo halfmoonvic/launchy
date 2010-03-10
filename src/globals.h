@@ -22,9 +22,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 #include "catalog_builder.h"
+#include "SettingsManager.h"
 
 #define LAUNCHY_VERSION 249
-#define LAUNCHY_VERSION_STRING "2.5.0 Beta 2"
+#define LAUNCHY_VERSION_STRING "2.5.0 Beta 3"
 
 #define HASH_LAUNCHY 0
 #define HASH_HISTORY 1
@@ -39,6 +40,7 @@ class PlatformBase;
 extern PlatformBase* platform;
 extern LaunchyWidget* gMainWidget;
 extern QSettings* gSettings;
+extern SettingsManager settings;
 extern shared_ptr<CatalogBuilder> gBuilder;
 extern QString gSearchText;
 
