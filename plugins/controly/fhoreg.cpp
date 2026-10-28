@@ -6,11 +6,11 @@
 
 // currently, we assume that all reg values are returned as strings
 
-HKEY FhoReg::OpenKey(HKEY baseKey, QString &subKeyName, DWORD options) {
+HKEY FhoReg::OpenKey(HKEY baseKey, const QString &subKeyName, DWORD options) {
 	HKEY k;
 	
 	LONG l = RegOpenKeyEx(baseKey,
-						  subKeyName.utf16(),
+						  (LPCWSTR)subKeyName.utf16(),
 						  0,
 						  options,
 						  &k);
@@ -27,7 +27,7 @@ void FhoReg::CloseKey(HKEY key) {
 	}
 }
 
-QStringList* FhoReg::EnumValues(HKEY parentKey, QString &parentSubKeyName) {
+QStringList* FhoReg::EnumValues(HKEY parentKey, const QString &parentSubKeyName) {
 	QStringList *resultList = new QStringList();
 
 	HKEY k = OpenKey(parentKey, parentSubKeyName, KEY_QUERY_VALUE);
@@ -52,7 +52,7 @@ QStringList* FhoReg::EnumValues(HKEY parentKey, QString &parentSubKeyName) {
 							 &size2);
 
 			if (l == ERROR_SUCCESS) {
-				QString name = QString::fromUtf16(valueName);
+				QString name = QString::fromWCharArray(valueName);
 				QString data = QString::fromUtf16((const ushort*) valueData);
 
 				resultList->append(data);
@@ -87,7 +87,7 @@ QStringList* FhoReg::EnumSubKeys(HKEY key) {
 							 NULL);
 
 			if (l == ERROR_SUCCESS) {
-				QString subKeyName = QString::fromUtf16(keyName);
+				QString subKeyName = QString::fromWCharArray(keyName);
 
 				resultList->append(subKeyName);
 			}
@@ -99,7 +99,7 @@ QStringList* FhoReg::EnumSubKeys(HKEY key) {
 	return resultList;
 }
 
-QStringList* FhoReg::EnumSubKeys(HKEY parentKey, QString &parentSubKeyName) {
+QStringList* FhoReg::EnumSubKeys(HKEY parentKey, const QString &parentSubKeyName) {
 	QStringList *resultList;
 
 	HKEY k = OpenKey(parentKey, parentSubKeyName, KEY_ENUMERATE_SUB_KEYS);
@@ -115,13 +115,13 @@ QStringList* FhoReg::EnumSubKeys(HKEY parentKey, QString &parentSubKeyName) {
 	return resultList;
 }
 
-QString FhoReg::GetKeyValue(HKEY key, QString &valueName) {
+QString FhoReg::GetKeyValue(HKEY key, const QString &valueName) {
 	DWORD type;
 	BYTE keyVal[maxSize];
 	DWORD sz = maxSize;
 
 	LONG l = RegQueryValueEx(key,
-							 (!valueName.isEmpty()) ? valueName.utf16() : NULL,
+							 (!valueName.isEmpty()) ? (LPCWSTR)valueName.utf16() : NULL,
 							 NULL,
 							 &type,
 							 keyVal,
@@ -134,7 +134,7 @@ QString FhoReg::GetKeyValue(HKEY key, QString &valueName) {
 	return NULL;
 }
 
-QString FhoReg::GetKeyValue(HKEY parentKey, QString &parentSubKeyName, QString &valueName) {
+QString FhoReg::GetKeyValue(HKEY parentKey, const QString &parentSubKeyName, const QString &valueName) {
 	HKEY k = OpenKey(parentKey, parentSubKeyName, KEY_QUERY_VALUE);
 
 	QString value;
@@ -152,7 +152,7 @@ QString FhoReg::GetKeyDefaultValue(HKEY key) {
 	return GetKeyValue(key, QString());
 }
 
-QString FhoReg::GetKeyDefaultValue(HKEY parentKey, QString &parentSubKeyName) {
+QString FhoReg::GetKeyDefaultValue(HKEY parentKey, const QString &parentSubKeyName) {
 	HKEY k = OpenKey(parentKey, parentSubKeyName, KEY_QUERY_VALUE);
 
 	QString value;

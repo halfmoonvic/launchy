@@ -127,7 +127,7 @@ void controlyPlugin::addCatItem(QString text, QList<CatItem>* results, QString f
 {
 	if (text.length() == 0 || isMatch(shortName, text))
 	{
-		CatItem& item = CatItem(fullName, shortName, HASH_controly, getIconPath() + fullName.toLower() + ".png");
+		CatItem item = CatItem(fullName, shortName, HASH_controly, getIconPath() + fullName.toLower() + ".png");
 		item.usage = (*settings)->value("controly/" + shortName.replace(" ", "") , 0).toInt();
 		results->push_back(item);
 	}

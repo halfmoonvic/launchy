@@ -22,6 +22,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "platform_win_util.h"
 #include "WinIconProvider.h"
 
+// MinGW's libuuid doesn't provide this one
+#ifdef __MINGW32__
+extern "C" const IID IID_IImageList = { 0x46eb5926, 0x582e, 0x4017, { 0x9f, 0xdf, 0xe8, 0x99, 0x8d, 0xaa, 0x09, 0x50 } };
+#endif
+
 // Temporary work around to avoid having to install the latest Windows SDK
 #ifndef __IShellItemImageFactory_INTERFACE_DEFINED__
 #define __IShellItemImageFactory_INTERFACE_DEFINED__
@@ -119,7 +124,7 @@ QIcon WinIconProvider::icon(const QFileInfo& info) const
 	{
 		HICON hIcon;
 		QString filePath = QDir::toNativeSeparators(info.filePath());
-		ExtractIconEx(filePath.utf16(), 0, &hIcon, NULL, 1);
+		ExtractIconEx((LPCWSTR)filePath.utf16(), 0, &hIcon, NULL, 1);
         retIcon = QIcon(QPixmap::fromWinHICON(hIcon));
 		DestroyIcon(hIcon);
 	}
@@ -145,7 +150,7 @@ QIcon WinIconProvider::icon(const QFileInfo& info) const
 		}
 		if (sfi.iIcon == 0)
 		{
-			SHGetFileInfo(filePath.utf16(), 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX);
+			SHGetFileInfo((LPCWSTR)filePath.utf16(), 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX);
 		}
 
 		// An icon index of 3 is the generic file icon
@@ -222,7 +227,7 @@ bool WinIconProvider::addIconFromShellFactory(QString filePath, QIcon& icon) con
 	if (fnSHCreateItemFromParsingName)
 	{
 		IShellItem* psi = NULL;
-		hr = fnSHCreateItemFromParsingName(filePath.utf16(), 0, IID_IShellItem, (void**)&psi);
+		hr = fnSHCreateItemFromParsingName((LPCWSTR)filePath.utf16(), 0, IID_IShellItem, (void**)&psi);
 		if (hr == S_OK)
 		{
 			IShellItemImageFactory* psiif = NULL;

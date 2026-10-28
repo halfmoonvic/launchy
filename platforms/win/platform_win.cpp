@@ -218,7 +218,7 @@ bool PlatformWin::getComputers(QStringList& computers) const
 	{
 		foreach(QString domain, domains)
 		{
-			EnumerateNetworkServers(computers, SV_TYPE_WORKSTATION | SV_TYPE_SERVER, domain.utf16());
+			EnumerateNetworkServers(computers, SV_TYPE_WORKSTATION | SV_TYPE_SERVER, (LPCWSTR)domain.utf16());
 		}
 
 		// If names have been retrieved from more than one domain, they'll need sorting

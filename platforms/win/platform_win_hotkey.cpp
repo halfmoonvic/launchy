@@ -54,7 +54,7 @@ HINSTANCE GetHInstance()
     TCHAR szModule[MAX_PATH];
 
     SetLastError(ERROR_SUCCESS);
-    if (VirtualQuery(GetHInstance,&mbi,sizeof(mbi)))
+    if (VirtualQuery((LPCVOID)GetHInstance,&mbi,sizeof(mbi)))
     {
         if (GetModuleFileName((HINSTANCE)mbi.AllocationBase, szModule, sizeof(szModule)))
         {
