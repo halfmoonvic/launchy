@@ -237,5 +237,9 @@ bool PlatformWin::getComputers(QStringList& computers) const
 // Create the application object
 QApplication* createApplication(int& argc, char** argv)
 {
+	// Icons are extracted on a worker thread. Since Qt 4.8, pixmaps created off
+	// the GUI thread are null unless the graphics system is explicitly raster,
+	// which is already the default on Windows.
+	QApplication::setGraphicsSystem("raster");
 	return new PlatformWin(argc, argv);
 }
