@@ -228,15 +228,17 @@ bool WinIconProvider::addIconFromImageList(int imageListIndex, int iconIndex, QI
 
 
 // The sizes to load when reading an icon directly: the preferred size plus the
-// standard large and small sizes so the closest frame is used at each scale
+// system large and small icon sizes, which scale with DPI like the shell's icons
 QList<int> WinIconProvider::iconSizes() const
 {
 	QList<int> sizes;
 	sizes << preferredSize;
-	if (preferredSize != 32)
-		sizes << 32;
-	if (preferredSize != 16)
-		sizes << 16;
+	int largeSize = GetSystemMetrics(SM_CXICON);
+	int smallSize = GetSystemMetrics(SM_CXSMICON);
+	if (!sizes.contains(largeSize))
+		sizes << largeSize;
+	if (!sizes.contains(smallSize))
+		sizes << smallSize;
 	return sizes;
 }
 

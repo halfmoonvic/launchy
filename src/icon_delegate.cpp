@@ -40,17 +40,16 @@ void IconDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 		painter->setPen(option.palette.color(QPalette::HighlightedText));
 	}
 
-	QRect iconRect = option.rect;
-	iconRect.setWidth(32);
-	iconRect.setHeight(32);
+	// Icon centred vertically with a small margin, both lines of text to its right
+	QRect iconRect(option.rect.left() + 4, option.rect.top() + (option.rect.height() - 32) / 2, 32, 32);
 
 	int fontHeight = painter->fontMetrics().height();
 	QRect shortRect = option.rect;
-	shortRect.setLeft(shortRect.left() + 38);
+	shortRect.setLeft(shortRect.left() + 46);
 	shortRect.setBottom(shortRect.top() + fontHeight);
 
 	QRect longRect = option.rect;
-	longRect.setLeft(longRect.left() + 50);
+	longRect.setLeft(longRect.left() + 58);
 	longRect.setTop(longRect.top() + fontHeight);
 
 	QString text = Catalog::decorateText(index.data(ROLE_SHORT).toString(), gSearchText);
@@ -67,14 +66,32 @@ void IconDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 	full = painter->fontMetrics().elidedText(full, option.textElideMode, longRect.width());
 	painter->drawText(longRect, Qt::AlignTop, full);
 
+	// Draw the smallest pixmap of at least 32 pixels without shrinking it, up to the
+	// system's large icon size (40 pixels at 125% DPI), centred on the icon area.
+	// Shrinking a 40 pixel shell icon into 32 pixels makes it look undersized.
 	QIcon p = index.data(ROLE_ICON).value<QIcon>();
-	p.paint(painter, iconRect);
+	int maxSize = 32 * painter->device()->logicalDpiX() / 96;
+	QSize size;
+	foreach (QSize available, p.availableSizes())
+	{
+		if (available.width() >= 32 && available.width() <= maxSize &&
+			(!size.isValid() || available.width() < size.width()))
+			size = available;
+	}
+	if (!size.isValid())
+		size = QSize(32, 32);
+	QRect drawRect(QPoint(0, 0), size);
+	drawRect.moveCenter(iconRect.center());
+	p.paint(painter, drawRect);
 	painter->restore();
 }
 
 
-QSize IconDelegate::sizeHint(const QStyleOptionViewItem & /* option */,
+QSize IconDelegate::sizeHint(const QStyleOptionViewItem & option,
 							 const QModelIndex & /* index */) const
 {
-	return QSize(10, 32);
+	// Fit both lines of text in the fonts the skin uses, and at least the icon.
+	// A fixed 32 pixels cuts off the path line with larger skin fonts.
+	int textHeight = option.fontMetrics.height() + alternativesPath->fontMetrics().height() + 4;
+	return QSize(10, qMax(32, textHeight));
 }
