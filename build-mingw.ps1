@@ -18,6 +18,11 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 
+# Before PATH is narrowed to the toolchain below
+if ($Package -and -not $Version) {
+    $Version = '2.6b2-' + (git -C $root rev-parse --short HEAD)
+}
+
 $env:QTDIR = $QtDir
 $env:QMAKESPEC = 'win32-g++'
 $env:PATH = "$QtDir\bin;$MinGWDir\bin;$env:SystemRoot\System32;$env:SystemRoot"
@@ -65,9 +70,6 @@ if (-not $Package) {
     return
 }
 
-if (-not $Version) {
-    $Version = '2.6b2-' + (git -C $root rev-parse --short HEAD)
-}
 $packageDir = Join-Path $root 'package'
 $stage = Join-Path $packageDir 'Launchy'
 $zip = Join-Path $packageDir "Launchy-$Version-win32.zip"
