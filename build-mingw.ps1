@@ -45,7 +45,8 @@ foreach ($dll in 'QtCore4', 'QtGui4', 'QtNetwork4') {
 foreach ($dll in 'libgcc_s_dw2-1', 'libstdc++-6', 'libwinpthread-1') {
     Copy-Item "$MinGWDir\bin\$dll.dll" $dist
 }
-foreach ($fmt in 'qico4', 'qjpeg4', 'qgif4') {
+# qmng4 plays skin animations such as spinner.mng
+foreach ($fmt in 'qico4', 'qjpeg4', 'qgif4', 'qmng4') {
     Copy-Item "$QtDir\plugins\imageformats\$fmt.dll" "$dist\imageformats"
 }
 Copy-Item "$root\translations\*.qm" "$dist\tr"
