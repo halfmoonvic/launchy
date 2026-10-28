@@ -43,6 +43,7 @@ private slots:
 
 private:
 	void appendRow(const QString& name, const QString& file, const QString& args);
+	void writeOptional(const QString& key, QTableWidgetItem* item);
 
 	QSettings* settings;
 	FileBrowserDelegate delegate;

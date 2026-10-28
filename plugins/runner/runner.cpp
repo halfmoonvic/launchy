@@ -62,6 +62,7 @@ void RunnerPlugin::init()
 		cmd.args = set->value("args").toString();
 		// QSettings reads an unquoted "file,index" as a string list
 		cmd.icon = set->value("icon").toStringList().join(",");
+		cmd.show = set->value("show").toString();
 		cmds.push_back(cmd);
 	}
 	set->endArray();
@@ -176,7 +177,26 @@ void RunnerPlugin::launchItem(QList<InputData>* inputData, CatItem* item)
 		file = url.toEncoded();
 	}
 	//	qDebug() << file << args;
-	runProgram(file, args);
+	runProgram(file, args, true, getShowMode(base->fullPath));
+}
+
+
+// Find the window style set for the command that produced this catalog item
+RunShowMode RunnerPlugin::getShowMode(const QString& fullPath)
+{
+	foreach(runnerCmd cmd, cmds)
+	{
+		if (cmd.file + "%%%" + cmd.args == fullPath)
+		{
+			QString show = cmd.show.trimmed().toLower();
+			if (show == "hidden")
+				return RUN_HIDDEN;
+			if (show == "minimized")
+				return RUN_MINIMIZED;
+			break;
+		}
+	}
+	return RUN_NORMAL;
 }
 
 

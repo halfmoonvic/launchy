@@ -106,7 +106,7 @@ void runProgram(QString path, QString args) {
 	ShellExecuteEx(&ShExecInfo);	
 }
 */
-void runProgram(QString path, QString args, bool translateSeparators) {
+void runProgram(QString path, QString args, bool translateSeparators, RunShowMode showMode) {
 
 	// This 64 bit aliasing needs to be gotten rid of if we have a 64 bit build
 	path = aliasTo64(path);
@@ -136,7 +136,18 @@ void runProgram(QString path, QString args, bool translateSeparators) {
 		dir.cdUp();
 	QString directory = QDir::toNativeSeparators(dir.absolutePath());
 	ShExecInfo.lpDirectory = (LPCTSTR)directory.utf16();
-	ShExecInfo.nShow = SW_NORMAL;
+	switch (showMode)
+	{
+	case RUN_HIDDEN:
+		ShExecInfo.nShow = SW_HIDE;
+		break;
+	case RUN_MINIMIZED:
+		ShExecInfo.nShow = SW_SHOWMINNOACTIVE;
+		break;
+	default:
+		ShExecInfo.nShow = SW_NORMAL;
+		break;
+	}
 	ShExecInfo.hInstApp = NULL;
 
 	ShellExecuteEx(&ShExecInfo);	
@@ -148,9 +159,10 @@ void runProgram(QString path, QString args, bool translateSeparators) {
 
 int getDesktop() { return DESKTOP_MAC; }
 
-void runProgram(QString path, QString args, bool translateSeparators)
+void runProgram(QString path, QString args, bool translateSeparators, RunShowMode showMode)
 {
     translateSeparators = translateSeparators; // kill warning
+    showMode = showMode;
     QString cmd;
     cmd = "open \"" + QDir::toNativeSeparators(path) + "\" --args " + args.trimmed();
     QProcess::startDetached(cmd.trimmed());
@@ -179,7 +191,7 @@ int getDesktop()
 
 
 
-void runProgram(QString path, QString args, bool translateSeparators) {
+void runProgram(QString path, QString args, bool translateSeparators, RunShowMode showMode) {
 
     QString fullname = path.split(" ")[0];
     QFileInfo info(fullname);

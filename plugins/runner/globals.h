@@ -26,6 +26,7 @@ struct runnerCmd {
 	QString file;
 	QString args;
 	QString icon;	// optional: .ico/.png file or "file,index"
+	QString show;	// optional: normal (default), hidden or minimized
 };
 
 

@@ -52,6 +52,7 @@ private:
 	void init();
 	QString getIcon();
 	QString getIcon(const runnerCmd& cmd);
+	RunShowMode getShowMode(const QString& fullPath);
 
 	uint HASH_WEBSITE;
 	uint HASH_runner;

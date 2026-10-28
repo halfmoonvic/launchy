@@ -48,6 +48,7 @@ Gui::Gui(QWidget* parent, QSettings* settings)
 		table->setItem(i, 1, new QTableWidgetItem(settings->value("file").toString()));
 		table->setItem(i, 2, new QTableWidgetItem(settings->value("args").toString()));
 		table->setItem(i, 3, new QTableWidgetItem(settings->value("icon").toStringList().join(",")));
+		table->setItem(i, 4, new QTableWidgetItem(settings->value("show").toString()));
 		table->verticalHeader()->resizeSection(i, table->verticalHeader()->fontMetrics().height() + ROW_PADDING);
 	}
 	settings->endArray();
@@ -75,14 +76,21 @@ void Gui::writeOptions()
 			settings->setValue("args", "");
 		else
 			settings->setValue("args", table->item(i, 2)->text());
-		// Optional, so only written when set; remove any value left from an earlier row at this index
-		QString icon = table->item(i,3) == NULL ? QString() : table->item(i,3)->text().trimmed();
-		if (icon.isEmpty())
-			settings->remove("icon");
-		else
-			settings->setValue("icon", icon);
+		writeOptional("icon", table->item(i, 3));
+		writeOptional("show", table->item(i, 4));
 	}
 	settings->endArray();
+}
+
+// Optional settings are only written when set; this also removes any value
+// left from an earlier row at the same index
+void Gui::writeOptional(const QString& key, QTableWidgetItem* item)
+{
+	QString value = item == NULL ? QString() : item->text().trimmed();
+	if (value.isEmpty())
+		settings->remove(key);
+	else
+		settings->setValue(key, value);
 }
 
 void Gui::newRow() 
@@ -144,5 +152,6 @@ void Gui::appendRow(const QString& name, const QString& file, const QString& arg
 	table->setItem(row, 1, new QTableWidgetItem(file));
 	table->setItem(row, 2, new QTableWidgetItem(args));
 	table->setItem(row, 3, new QTableWidgetItem());
+	table->setItem(row, 4, new QTableWidgetItem());
 	table->verticalHeader()->resizeSection(row, table->verticalHeader()->fontMetrics().height() + ROW_PADDING);
 }

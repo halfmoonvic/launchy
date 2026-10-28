@@ -573,6 +573,15 @@ public:
 };
 
 
+/** How runProgram shows the program's window */
+enum RunShowMode
+{
+	RUN_NORMAL,
+	RUN_HIDDEN,
+	RUN_MINIMIZED	// minimized without taking focus
+};
+
+
 /**
 	\brief A convienience run function
 
@@ -580,8 +589,9 @@ public:
 	\param file The location of the file to run
 	\param args The arguments to the command
 	\param translateSeparators Whether to translate / into native separators
+	\param showMode How to show the program's window (Windows only)
 	*/
-void runProgram(QString file, QString args, bool translateSeparators = true);
+void runProgram(QString file, QString args, bool translateSeparators = true, RunShowMode showMode = RUN_NORMAL);
 int getDesktop();
 
 
