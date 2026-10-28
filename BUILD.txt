@@ -23,9 +23,41 @@ Building and installing on Mac OS X:
 
 
 
-Building on Windows:
+Building on Windows with MinGW (current method):
 
-Requirements: 
+Requirements:
+1) Qt 4.8.7 for MinGW: qt-opensource-windows-x86-mingw482-4.8.7.exe from
+   https://download.qt.io/archive/qt/4.8/4.8.7/ installed to C:\Qt\4.8.7
+2) MinGW 4.8.2, the toolchain that Qt build uses:
+   i686-4.8.2-release-posix-dwarf-rt_v3-rev3.7z from the mingw-w64 project on
+   SourceForge (Toolchains targetting Win32 / Personal Builds / mingw-builds),
+   extracted to C:\mingw32
+3) Boost headers in C:\boost (only header-only parts such as shared_ptr are used)
+
+If Qt is installed silently (/S), the installer skips writing the edition into
+C:\Qt\4.8.7\src\corelib\global\qconfig.h, and compiling fails with
+"'QtValidLicenseForCoreModule' does not name a type". Fix it by setting
+  #define QT_EDITION QT_EDITION_OPENSOURCE
+in qconfig.h and "QT_EDITION = OpenSource" in C:\Qt\4.8.7\mkspecs\qconfig.pri.
+
+Building:
+. powershell -File build-mingw.ps1
+  This builds a release and collects Launchy.exe, the plugins, the Qt and
+  MinGW runtime DLLs, translations, skins and Utilities in dist\.
+. Use build-mingw.ps1 -Clean after changing src\plugin_interface.h: plugins
+  include it through their precompiled header, and the generated makefiles
+  don't notice it changed.
+. dist\ runs in portable mode when it contains a launchy.ini; add /multiple
+  to run it beside an installed Launchy.
+
+The exe and all plugins must be built together with the same compiler and
+Qt; plugins from another build won't load.
+
+
+
+Building on Windows with Visual Studio (original method):
+
+Requirements:
 1) Visual Studio 2005 w/ SP1
 2) QT 4.6 or greater.
 3) Boost
