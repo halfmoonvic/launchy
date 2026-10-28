@@ -25,6 +25,7 @@ struct runnerCmd {
 	QString name;
 	QString file;
 	QString args;
+	QString icon;	// optional: .ico/.png file or "file,index"
 };
 
 

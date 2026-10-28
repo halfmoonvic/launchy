@@ -113,7 +113,17 @@ QIcon WinIconProvider::icon(const QFileInfo& info) const
 	QIcon retIcon;
 	QString fileExtension = info.suffix().toLower();
 
-	if (fileExtension == "png" ||
+	// "file,index" refers to an icon resource in an exe or dll, as in shell icon locations
+	QRegExp resourceRe("^(.+),(-?\\d+)$");
+	if (!info.exists() && resourceRe.exactMatch(info.filePath()))
+	{
+		addIconFromResource(resourceRe.cap(1), resourceRe.cap(2).toInt(), retIcon);
+	}
+	else if (fileExtension == "ico")
+	{
+		addIconFromIcoFile(info.filePath(), retIcon);
+	}
+	else if (fileExtension == "png" ||
 		fileExtension == "bmp" ||
 		fileExtension == "jpg" ||
 		fileExtension == "jpeg")
@@ -214,6 +224,57 @@ bool WinIconProvider::addIconFromImageList(int imageListIndex, int iconIndex, QI
 	}
 
 	return SUCCEEDED(hResult);
+}
+
+
+// The sizes to load when reading an icon directly: the preferred size plus the
+// standard large and small sizes so the closest frame is used at each scale
+QList<int> WinIconProvider::iconSizes() const
+{
+	QList<int> sizes;
+	sizes << preferredSize;
+	if (preferredSize != 32)
+		sizes << 32;
+	if (preferredSize != 16)
+		sizes << 16;
+	return sizes;
+}
+
+
+// Load an .ico file directly, letting Windows pick the best frame for each size
+// rather than using the shell's thumbnail of the file
+bool WinIconProvider::addIconFromIcoFile(QString filePath, QIcon& icon) const
+{
+	filePath = QDir::toNativeSeparators(filePath);
+	foreach (int size, iconSizes())
+	{
+		HICON hIcon = (HICON)LoadImage(NULL, (LPCWSTR)filePath.utf16(), IMAGE_ICON, size, size, LR_LOADFROMFILE);
+		if (hIcon)
+		{
+			icon.addPixmap(QPixmap::fromWinHICON(hIcon));
+			DestroyIcon(hIcon);
+		}
+	}
+
+	return !icon.isNull();
+}
+
+
+// Load the icon at iconIndex (or with resource id -iconIndex) from an exe or dll
+bool WinIconProvider::addIconFromResource(QString filePath, int iconIndex, QIcon& icon) const
+{
+	filePath = QDir::toNativeSeparators(filePath);
+	foreach (int size, iconSizes())
+	{
+		HICON hIcon = NULL;
+		if (SHDefExtractIcon((LPCWSTR)filePath.utf16(), iconIndex, 0, &hIcon, NULL, size) == S_OK && hIcon)
+		{
+			icon.addPixmap(QPixmap::fromWinHICON(hIcon));
+			DestroyIcon(hIcon);
+		}
+	}
+
+	return !icon.isNull();
 }
 
 

@@ -51,7 +51,7 @@ private:
 	void endDialog(bool accept);
 	void init();
 	QString getIcon();
-	QString getIcon(QString file);
+	QString getIcon(const runnerCmd& cmd);
 
 	uint HASH_WEBSITE;
 	uint HASH_runner;

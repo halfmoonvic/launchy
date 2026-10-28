@@ -60,6 +60,8 @@ void RunnerPlugin::init()
 		cmd.file = set->value("file").toString();
 		cmd.name = set->value("name").toString();
 		cmd.args = set->value("args").toString();
+		// QSettings reads an unquoted "file,index" as a string list
+		cmd.icon = set->value("icon").toStringList().join(",");
 		cmds.push_back(cmd);
 	}
 	set->endArray();
@@ -84,13 +86,28 @@ QString RunnerPlugin::getIcon()
 }
 
 
-QString RunnerPlugin::getIcon(QString file)
+// Pick the icon for a command: its own icon if that exists, then the icon of
+// the program it runs, then the runner icon. A missing file would otherwise
+// be shown with the shell's folder icon.
+QString RunnerPlugin::getIcon(const runnerCmd& cmd)
 {
-    file = file; // Warning removal
+	if (!cmd.icon.isEmpty())
+	{
+		// "file,index" refers to an icon inside an exe or dll
+		QString iconFile = cmd.icon;
+		QRegExp resourceRx("^(.+),-?\\d+$");
+		if (!QFile::exists(iconFile) && resourceRx.exactMatch(iconFile))
+			iconFile = resourceRx.cap(1);
+		if (QFile::exists(iconFile))
+			return cmd.icon;
+	}
+
 #ifdef Q_WS_WIN
+	// Relative names such as notepad.exe are resolved by the shell, so only
+	// absolute paths can be checked
 	QRegExp rx("\\.(exe|lnk)$", Qt::CaseInsensitive);
-    if (rx.indexIn(file) != -1)
-		return file;
+	if (rx.indexIn(cmd.file) != -1 && (QFileInfo(cmd.file).isRelative() || QFile::exists(cmd.file)))
+		return cmd.file;
 #endif
 	return getIcon();
 }
@@ -100,7 +117,7 @@ void RunnerPlugin::getCatalog(QList<CatItem>* items)
 {
 	foreach(runnerCmd cmd, cmds)
 	{
-		items->push_back(CatItem(cmd.file + "%%%" + cmd.args, cmd.name, HASH_runner, getIcon(cmd.file)));
+		items->push_back(CatItem(cmd.file + "%%%" + cmd.args, cmd.name, HASH_runner, getIcon(cmd)));
 	}
 }
 
@@ -115,7 +132,7 @@ void RunnerPlugin::getResults(QList<InputData>* inputData, QList<CatItem>* resul
 	{
 		const QString & text = inputData->last().getText();
 		// This is user search text, create an entry for it
-		results->push_front(CatItem(text, text, HASH_runner, getIcon(catItem.icon)));
+		results->push_front(CatItem(text, text, HASH_runner, catItem.icon));
 	}
 }
 

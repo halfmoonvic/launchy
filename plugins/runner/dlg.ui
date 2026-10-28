@@ -29,7 +29,7 @@
       <bool>false</bool>
      </property>
      <property name="columnCount">
-      <number>3</number>
+      <number>4</number>
      </property>
      <attribute name="verticalHeaderDefaultSectionSize">
       <number>5</number>
@@ -47,6 +47,14 @@
      <column>
       <property name="text">
        <string>Arguments</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Icon</string>
+      </property>
+      <property name="toolTip">
+       <string>Optional .ico or .png file, or file,index for an icon in an exe or dll</string>
       </property>
      </column>
     </widget>
