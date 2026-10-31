@@ -36,10 +36,27 @@ cmds\N\show=hidden                     ; normal（默认）、hidden 或 minimiz
 
 ## 安装
 
-从 [Releases](https://github.com/halfmoonvic/launchy/releases) 下载
-`Launchy-<版本>-win32.zip`，解压到任意位置，例如
-`%LOCALAPPDATA%\Programs\Launchy`，运行 `Launchy.exe` 即可，不需要安装。
-按 Alt+Space 呼出。
+在 PowerShell 里运行：
+
+```powershell
+irm https://raw.githubusercontent.com/halfmoonvic/launchy/main/install.ps1 | iex
+```
+
+它会把最新版本下载到 `%LOCALAPPDATA%\Programs\Launchy`，添加开始菜单快捷方式，
+然后启动 Launchy。按 Alt+Space 呼出。再运行一次就是更新，设置会保留。
+要装到别的位置，先设置 `$env:LAUNCHY_INSTALL_DIR`。
+
+卸载：
+
+```powershell
+irm https://raw.githubusercontent.com/halfmoonvic/launchy/main/uninstall.ps1 | iex
+```
+
+它会关闭 Launchy，删除安装目录，以及开始菜单和"启动"文件夹里指向它的所有快捷方式。
+`%APPDATA%\Launchy` 里的设置会保留，想一起清除就手动删掉这个文件夹。
+
+也可以手动安装：从 [Releases](https://github.com/halfmoonvic/launchy/releases)
+下载 `Launchy-<版本>-win32.zip`，解压到任意位置，运行 `Launchy.exe`。
 
 设置保存在 `%APPDATA%\Launchy\launchy.ini`。只要 `Launchy.exe` 同一目录下有
 `launchy.ini`，Launchy 就以便携模式运行，设置保存在程序目录里。

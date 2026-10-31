@@ -39,10 +39,30 @@ Also:
 
 ## Installing
 
-Download `Launchy-<version>-win32.zip` from
-[Releases](https://github.com/halfmoonvic/launchy/releases), unzip it anywhere,
-for example `%LOCALAPPDATA%\Programs\Launchy`, and run `Launchy.exe`. No
-installer is needed. Press Alt+Space to show it.
+Run this in PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/halfmoonvic/launchy/main/install.ps1 | iex
+```
+
+It downloads the latest release into `%LOCALAPPDATA%\Programs\Launchy`, adds
+a Start Menu shortcut and starts Launchy. Press Alt+Space to show it. Running
+it again updates Launchy and keeps your settings. To install somewhere else,
+set `$env:LAUNCHY_INSTALL_DIR` first.
+
+To uninstall:
+
+```powershell
+irm https://raw.githubusercontent.com/halfmoonvic/launchy/main/uninstall.ps1 | iex
+```
+
+This closes Launchy and deletes the install folder and every Start Menu or
+Startup shortcut pointing at it. Your settings in `%APPDATA%\Launchy` are
+kept; delete that folder too to remove them.
+
+You can also install by hand: download `Launchy-<version>-win32.zip` from
+[Releases](https://github.com/halfmoonvic/launchy/releases), unzip it anywhere
+and run `Launchy.exe`.
 
 Settings are kept in `%APPDATA%\Launchy\launchy.ini`. Launchy runs in portable
 mode, with its settings next to `Launchy.exe`, whenever there is a
