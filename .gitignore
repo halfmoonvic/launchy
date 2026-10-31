@@ -9,10 +9,8 @@ ui_*.h
 /src/build/
 /src/release/
 /src/debug/
-/release/*
-!/release/skins/
-/debug/*
-!/debug/skins/
+/release/
+/debug/
 
 # collected and packaged by build-mingw.ps1
 /dist/
