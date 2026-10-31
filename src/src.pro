@@ -1,7 +1,5 @@
 TEMPLATE = app
-unix:!macx:TARGET = launchy
 win32:TARGET = Launchy
-macx:TARGET = Launchy
 CONFIG += debug_and_release
 PRECOMPILED_HEADER = precompiled.h
 
@@ -54,37 +52,6 @@ HEADERS = platform_base.h \
     AnimationLabel.h \
 	SettingsManager.h
 FORMS = options.ui
-unix:!macx { 
-    ICON = Launchy.ico
-    SOURCES += ../platforms/unix/platform_unix.cpp \
-        ../platforms/unix/platform_unix_util.cpp \
-        ../platforms/unix/platform_x11_hotkey.cpp
-    HEADERS += ../platforms/unix/platform_unix.h \
-        ../platforms/unix/platform_unix_util.h \
-        ../platforms/unix/platform_x11_hotkey.h \
-        platform_base_hotkey.h \
-        platform_base_hottrigger.h
-    PREFIX = /usr
-    DEFINES += SKINS_PATH=\\\"$$PREFIX/share/launchy/skins/\\\" \
-        PLUGINS_PATH=\\\"$$PREFIX/lib/launchy/plugins/\\\" \
-        PLATFORMS_PATH=\\\"$$PREFIX/lib/launchy/\\\"
-    if(!debug_and_release|build_pass) { 
-        CONFIG(debug, debug|release):DESTDIR = ../debug/
-        CONFIG(release, debug|release):DESTDIR = ../release/
-    }
-    SOURCES += 
-    target.path = $$PREFIX/bin/
-    skins.path = $$PREFIX/share/launchy/skins/
-    skins.files = ../skins/*
-    icon.path = $$PREFIX/share/pixmaps
-    icon.files = ../misc/Launchy_Icon/launchy_icon.png
-    desktop.path = $$PREFIX/share/applications/
-    desktop.files = ../linux/launchy.desktop
-    INSTALLS += target \
-        skins \
-        icon \
-        desktop
-}
 win32 { 
     ICON = Launchy.ico
     if(!debug_and_release|build_pass):CONFIG(debug, debug|release):CONFIG += console
@@ -127,46 +94,6 @@ win32 {
         QMAKE_CXXFLAGS_RELEASE += /Zi
         QMAKE_LFLAGS_RELEASE += /DEBUG
     }
-}
-macx { 
-    ICON = ../misc/Launchy_Icon/launchy_icon_mac.icns
-    SOURCES += ../platforms/mac/platform_mac.cpp \
-        ../platforms/mac/platform_mac_hotkey.cpp
-    HEADERS += ../platforms/mac/platform_mac.h \
-        ../platforms/mac/platform_mac_hotkey.h \
-        platform_base_hotkey.h \
-        platform_base_hottrigger.h
-    if(!debug_and_release|build_pass) { 
-        CONFIG(debug, debug|release):DESTDIR = ../debug/
-        CONFIG(release, debug|release):DESTDIR = ../release/
-    }
-    INCLUDEPATH += /opt/local/include/
-    LIBS += -framework \
-        Carbon
-    CONFIG(debug, debug|release):skins.path = ../debug/Launchy.app/Contents/Resources/skins/
-    CONFIG(release, debug|release):skins.path = ../release/Launchy.app/Contents/Resources/skins/
-    skins.files = 
-    skins.extra = rsync -arvz ../skins/   ../release/Launchy.app/Contents/Resources/skins/   --exclude=\".svn\"
-    CONFIG(debug, debug|release):translations.path = ../debug/Launchy.app/Contents/MacOS/tr/
-    CONFIG(release, debug|release):translations.path = ../release/Launchy.app/Contents/MacOS/tr/
-    translations.files = ../translations/*.qm
-    translations.extra = lupdate \
-        src.pro \
-        ; \
-        lrelease \
-        src.pro
-    dmg.path = ../release/
-    dmg.files = 
-    dmg.extra = cd \
-        ../mac \
-        ; \
-        bash \
-        deploy; \
-        cd \
-        ../src
-    INSTALLS += skins \
-        translations \
-        dmg
 }
 TRANSLATIONS = ../translations/launchy_fr.ts \
     ../translations/launchy_nl.ts \
