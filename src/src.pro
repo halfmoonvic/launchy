@@ -53,7 +53,6 @@ HEADERS = platform_base.h \
 	SettingsManager.h
 FORMS = options.ui
 win32 { 
-    ICON = Launchy.ico
     if(!debug_and_release|build_pass):CONFIG(debug, debug|release):CONFIG += console
     SOURCES += ../platforms/win/platform_win.cpp \
         ../platforms/win/platform_win_hotkey.cpp \
@@ -66,17 +65,8 @@ win32 {
         ../platforms/win/platform_win.h \
         ../platforms/win/platform_win_util.h \
         ../platforms/win/minidump.h
-    win32-msvc*:CONFIG += embed_manifest_exe
     INCLUDEPATH += c:/boost/
     RC_FILE = ../win/launchy.rc
-	win32-msvc*:LIBS += shell32.lib \
-		user32.lib \
-		gdi32.lib \
-		ole32.lib \
-		comctl32.lib \
-		advapi32.lib \
-		userenv.lib \
-        netapi32.lib
 	win32-g++:LIBS += -lshell32 -luser32 -lgdi32 -lole32 -lcomctl32 -ladvapi32 -luserenv -lnetapi32 -luuid
     DEFINES = VC_EXTRALEAN \
         WIN32 \
@@ -89,10 +79,6 @@ win32 {
     if(!debug_and_release|build_pass) { 
         CONFIG(debug, debug|release):DESTDIR = ../debug/
         CONFIG(release, debug|release):DESTDIR = ../release/
-    }
-    win32-msvc* {
-        QMAKE_CXXFLAGS_RELEASE += /Zi
-        QMAKE_LFLAGS_RELEASE += /DEBUG
     }
 }
 TRANSLATIONS = ../translations/launchy_fr.ts \

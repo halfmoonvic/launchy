@@ -23,8 +23,6 @@ SOURCES = plugin_interface.cpp \
     IconCache.cpp
 TARGET = weby
 win32 { 
-    CONFIG -= embed_manifest_dll
-	win32-msvc*:LIBS += user32.lib shell32.lib
 	win32-g++:LIBS += -luser32 -lshell32
 }
 if(!debug_and_release|build_pass):CONFIG(debug, debug|release):DESTDIR = ../../debug/plugins
